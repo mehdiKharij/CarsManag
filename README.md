@@ -61,10 +61,6 @@ docker-compose up -d
 
 - **Frontend**: Open a browser and go to [http://localhost:3000](http://localhost:3000)
 - **Backend**: You can access the backend via [http://localhost:8080/api](http://localhost:8080/api)
-- **Database (PostgreSQL)**: PostgreSQL is accessible at `localhost:5432` with the following credentials:
-  - **User**: postgres
-  - **Password**: Kharij1972
-  - **Database**: springboot
 
 ### Step 5: Monitoring with Prometheus and Grafana
 
