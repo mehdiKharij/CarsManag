@@ -60,7 +60,7 @@ docker-compose up -d
 ### Step 4: Access the Application
 
 - **Frontend**: Open a browser and go to [http://localhost:3000](http://localhost:3000)
-- **Backend**: You can access the backend via [http://localhost:8080/api](http://localhost:8080/api)
+- **Backend**: You can access the backend via [http://localhost:8080](http://localhost:8080)
 
 ### Step 5: Monitoring with Prometheus and Grafana
 
