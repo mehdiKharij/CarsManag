@@ -9,7 +9,7 @@ This repository contains a full-stack web application for managing cars, built w
 
 Before running the application, ensure you have the following installed on your system:
 
-- [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/)
+-  [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
 ## Getting Started
 
