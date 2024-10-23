@@ -7,6 +7,7 @@ import Bienvenue from './components/Bienvenue';
 import Footer from './components/Footer';
 import Voiture from './components/Voiture';
 import VoitureListe from './components/VoitureList';
+import EditVoiture from './components/EditVoiture';
 
 class App extends React.Component {
     // State pour stocker la liste des voitures
@@ -44,7 +45,7 @@ class App extends React.Component {
                                     />
                                 } />
                                 <Route path="/list" element={<VoitureListe voitures={this.state.voitures} />} />
-                                <Route path="/edit/:id" element={<Voiture submitVoiture={this.submitVoiture} />} />
+                                <Route path="/edit/:id" element={<EditVoiture />} /> {/* Ajoutez cette ligne */}
 
                             </Routes>
                         </Col>

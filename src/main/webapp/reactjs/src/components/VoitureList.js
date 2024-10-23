@@ -57,7 +57,8 @@ export default class VoitureList extends Component {
                             <th>Couleur</th>
                             <th>Année</th>
                             <th>Prix</th>
-                            <th>Actions</th> {/* Ajouter une colonne pour les actions */}
+                            <th>Actions</th>
+                            {/* Ajouter une colonne pour les actions */}
                         </tr>
                         </thead>
                         <tbody>
@@ -71,11 +72,13 @@ export default class VoitureList extends Component {
                                     <td>{voiture.prix}</td>
                                     <td>
                                         <ButtonGroup>
-                                            <Link to={`edit/${voiture.id}`} className="btn btn-sm btn-outline-primary">
+                                            <Link to={`/edit/${voiture.id}`} className="btn btn-sm btn-outline-primary">
                                                 <FontAwesomeIcon icon={faEdit} />
-                                            </Link>{' '}
-                                            <Button size="sm" variant="outline-danger" onClick={this.deleteVoiture.bind(this, voiture.id)}>
-                                                <FontAwesomeIcon icon={faTrash} />
+                                            </Link>
+                                            {' '}
+                                            <Button size="sm" variant="outline-danger"
+                                                    onClick={this.deleteVoiture.bind(this, voiture.id)}>
+                                                <FontAwesomeIcon icon={faTrash}/>
                                             </Button>
                                         </ButtonGroup>
                                     </td>
@@ -88,9 +91,7 @@ export default class VoitureList extends Component {
                         )}
                         </tbody>
                     </Table>
-                    <div align="center" className="mt-2">
-                        {voitures.length > 0 && <p>Nombre de voitures: {voitures.length}</p>}
-                    </div>
+
                 </Card.Body>
             </Card>
         );
