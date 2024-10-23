@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: cars-mangem-frontend
+    ports:
+      - "3000:80" # Mappe le port 80 du conteneur au port 3000 de l'hôte
+    depends_on:
+      - backend # Assure que le backend est démarré avant le frontend
+
+  backend:
+    image: cars-mangem-backend
+    ports:
+      - "8080:8080" # Mappe le port 8080 du conteneur au port 8080 de l'hôte
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/springboot
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Kharij1972
+      SPRING_APPLICATION_NAME: CarsMangem
+      # Assurez-vous d'ajouter l'exportateur de métriques pour Prometheus
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
+      MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED: "true"
+      MANAGEMENT_METRICS_EXPORT_PROMETHEUS_RCONFIG: "/actuator/prometheus"
+    depends_on:
+      - db # Assure que la base de données est démarrée avant le backend
+
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432" # Mappe le port 5432 du conteneur au port 5432 de l'hôte
+    environment:
+      POSTGRES_DB: springboot
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Kharij1972
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist the data
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090" # Mappe le port 9090 du conteneur au port 9090 de l'hôte
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml # Liez votre fichier de configuration Prometheus
+    depends_on:
+      - backend # Assure que le backend est démarré avant Prometheus
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3001:3000" # Mappe le port 3000 du conteneur au port 3001 de l'hôte
+    depends_on:
+      - prometheus # Assure que Prometheus est démarré avant Grafana
+
+volumes:
+  postgres_data:

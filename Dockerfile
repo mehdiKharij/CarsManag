@@ -1,27 +1,14 @@
-# Use a base image with Java 17 (or the version you are using)
-FROM openjdk:17-jdk-slim as build
+# Étape 1 : Utiliser une image de base contenant Java
+FROM openjdk:21-jdk-slim
 
-# Set the working directory
+# Étape 2 : Définir le répertoire de travail dans le conteneur
 WORKDIR /app
 
-# Copy the Maven build files
-COPY pom.xml ./
-COPY src ./src
+# Étape 3 : Copier le fichier JAR de l'application dans le conteneur
+COPY target/*.jar app.jar
 
-# Build the application
-RUN ./mvnw clean package -DskipTests
-
-# Create a new stage for running the application
-FROM openjdk:17-jdk-slim
-
-# Set the working directory for the application
-WORKDIR /app
-
-# Copy the built JAR file from the build stage
-COPY --from=build /app/target/*.jar app.jar
-
-# Expose the application port
+# Étape 4 : Exposer le port sur lequel l'application écoute
 EXPOSE 8080
 
-# Command to run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Étape 5 : Définir la commande à exécuter lorsque le conteneur démarre
+CMD ["java", "-jar", "app.jar"]

@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 15s # Intervalle de collecte des données
+
+scrape_configs:
+  - job_name: 'backend'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['backend:8080'] # Remplacez par le nom de votre service backend
