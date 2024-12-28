@@ -4,7 +4,7 @@ pipeline {
     environment {
         // Variables d'environnement pour l'instance EC2 et SSH
         EC2_USER = 'ec2-user'
-        EC2_HOST = '13.60.191.174'  // Remplace par l'adresse IP de ton EC2
+        EC2_HOST = '51.20.31.28'  // Remplace par l'adresse IP de ton EC2
         SSH_KEY_PATH = 'C:/users/user/eu-west-1.pem' // Remplace par le chemin correct de ta clé privée
         DEPLOY_DIR = '/home/ec2-user/app' // Répertoire sur EC2 où les fichiers seront déployés
     }
