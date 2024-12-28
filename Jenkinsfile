@@ -1,61 +1,70 @@
 pipeline {
     agent any
+
     environment {
-        // Définir les variables d'environnement pour EC2 et la clé SSH
+        // Variables d'environnement pour l'instance EC2 et SSH
         EC2_USER = 'ec2-user'
-        EC2_HOST = '13.60.191.174' // Remplace par l'adresse IP de ton instance EC2
-        SSH_KEY_PATH = 'C:/users/user/eu-west-1.pem' // Chemin vers ta clé privée
-        DEPLOY_DIR = '/home/ec2-user/app' // Répertoire où tu veux déployer sur EC2
+        EC2_HOST = '13.60.191.174'  // Remplace par l'adresse IP de ton EC2
+        SSH_KEY_PATH = 'C:/users/user/eu-west-1.pem' // Remplace par le chemin correct de ta clé privée
+        DEPLOY_DIR = '/home/ec2-user/app' // Répertoire sur EC2 où les fichiers seront déployés
     }
+
     stages {
         stage('Clone Repository') {
             steps {
-                script
+                script {
+                    // Cloner le dépôt Git
+                    git 'https://github.com/mehdiKharij/CarsManag.git' // Remplace par l'URL de ton dépôt Git
+                }
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                script {
+                    // Construction des images Docker pour le frontend et le backend
                     sh 'docker-compose -f docker-compose.yml build'
                 }
             }
         }
 
-        stage('Push Docker Images to EC2') {
+        stage('Push Docker Images to Docker Hub') {
             steps {
                 script {
-                    // Copier la clé SSH privée pour l'authentification
-                    sh "chmod 400 ${SSH_KEY_PATH}"  // Assurer que les permissions de la clé SSH sont correctes
-                    
-                    // Copier le fichier docker-compose sur le serveur EC2
-                    sh "scp -i ${SSH_KEY_PATH} -o StrictHostKeyChecking=no docker-compose.yml ${EC2_USER}@${EC2_HOST}:${DEPLOY_DIR}"
+                    // Pousser les images Docker sur Docker Hub (si nécessaire)
+                    sh 'docker-compose -f docker-compose.yml push'
+                }
+            }
+        }
 
-                    // Copier les fichiers nécessaires pour le déploiement sur EC2
+        stage('Deploy to EC2') {
+            steps {
+                script {
+                    // Copier le fichier docker-compose.yml et autres fichiers nécessaires sur EC2
+                    sh "scp -i ${SSH_KEY_PATH} -o StrictHostKeyChecking=no docker-compose.yml ${EC2_USER}@${EC2_HOST}:${DEPLOY_DIR}"
+                    
+                    // Copier les dossiers frontend et backend sur EC2 si nécessaire
                     sh "scp -i ${SSH_KEY_PATH} -o StrictHostKeyChecking=no ./frontend ${EC2_USER}@${EC2_HOST}:${DEPLOY_DIR}"
                     sh "scp -i ${SSH_KEY_PATH} -o StrictHostKeyChecking=no ./backend ${EC2_USER}@${EC2_HOST}:${DEPLOY_DIR}"
 
-                    // SSH dans l'instance EC2 et démarrer le conteneur Docker
+                    // Connecter à EC2 et exécuter Docker Compose pour déployer les services
                     sh """
-                        ssh -i ${SSH_KEY_PATH} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} <<EOF
-                        cd ${DEPLOY_DIR}
-                        docker-compose down
-                        docker-compose up -d --build
+                        ssh -i ${SSH_KEY_PATH} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+                            cd ${DEPLOY_DIR}
+                            docker-compose down
+                            docker-compose pull
+                            docker-compose up -d
                         EOF
                     """
                 }
             }
         }
-
-        stage('Verify Deployment') {
-            steps {
-                script {
-                    // Vérifier si les services sont bien démarrés
-                    sh "ssh -i ${SSH_KEY_PATH} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} 'docker ps'"
-                }
-            }
-        }
     }
+
     post {
-        success {
-            echo 'Deployment succeeded!'
-        }
-        failure {
-            echo 'Deployment failed.'
+        always {
+            // Actions après l'exécution, comme nettoyer les ressources
+            echo 'Pipeline terminé'
         }
     }
 }
